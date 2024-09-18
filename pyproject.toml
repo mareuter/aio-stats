@@ -1,0 +1,46 @@
+[build-system]
+requires = [
+    "setuptools>=64",
+    "setuptools_scm>=8",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+dynamic = ["version"]
+name = "aio_stats"
+authors = [
+    {name = "Michael Reuter", email = "mareuternh@gmail.com"}
+]
+description = "Adafruit IO statistics generation."
+readme = "README.rst"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "adafruit-io",
+    "pandas",
+    "pyarrow"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit"
+]
+
+[project.scripts]
+collect_stats = "aio_stats.collect_stats:runner"
+
+[tool.ruff]
+line-length = 110
+
+[tool.ruff.per-file-ignores]
+"src/aio_stats/__init__.py" = [
+    "E402",
+    "F401",
+    "F403"
+]

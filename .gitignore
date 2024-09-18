@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2024 Michael Reuter
+#
+# SPDX-License-Identifier: CC0-1.0
+
+stat_feeds.toml
+
+__pycache__
+
+.ruff_cache
+
+*.egg-info
+
+.vscode
+.env
