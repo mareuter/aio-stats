@@ -33,7 +33,7 @@ def main(opts: argparse.Namespace) -> None:
             tdata = aioclient.transform_data(data, opts.timezone)
             stats = aio_stats.StatsMaker()
             stats.create_dataframe(tdata, feed)
-            stats.filter_time(yesterday, now)
+            stats.filter_time(yesterday, now, opts.day_bound)
             stats.make_stats()
             stats.save_stats(opts.output_dir, entry)
 
@@ -50,6 +50,10 @@ def runner() -> None:
         help="Configuration of feeds to collect stats for.",
     )
     parser.add_argument("--timezone", type=str, help="Set the timezone.")
+
+    parser.add_argument(
+        "--day-bound", action="store_true", help="Truncate timestamps to day bounds."
+    )
 
     args = parser.parse_args()
 

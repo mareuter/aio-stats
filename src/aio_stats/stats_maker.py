@@ -26,8 +26,14 @@ class StatsMaker:
             data, index="datetime", columns=["datetime", data_column]
         )
 
-    def filter_time(self, begin: datetime, end: datetime) -> None:
-        self.timestamp = begin
+    def filter_time(
+        self, begin: datetime, end: datetime, day_bound: bool = False
+    ) -> None:
+        if day_bound:
+            self.timestamp = begin.date()
+            end = end.date()
+        else:
+            self.timestamp = begin
         self.df = self.df.loc[end:begin]
 
     def make_stats(self) -> None:
