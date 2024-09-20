@@ -51,7 +51,7 @@ class StatsMaker:
             "min": [v_min],
             "max": [v_max],
             "mean": [v_mean],
-            "media": [v_median],
+            "median": [v_median],
             "std": [v_std],
             "var": [v_var],
             "time_of_min": [time_of_min],
