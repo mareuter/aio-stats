@@ -34,7 +34,7 @@ class StatsMaker:
             end = end.date()
         else:
             self.timestamp = begin
-        self.df = self.df.loc[end:begin]
+        self.df = self.df.loc[begin:end]
 
     def make_stats(self) -> None:
         column = self.df.columns[0]
@@ -48,14 +48,14 @@ class StatsMaker:
         time_of_max = self.df[self.df[column] == v_max].index.tolist()[0]
 
         stats = {
-            "min": v_min,
-            "max": v_max,
-            "mean": v_mean,
-            "media": v_median,
-            "std": v_std,
-            "var": v_var,
-            "time_of_min": time_of_min,
-            "time_of_max": time_of_max,
+            "min": [v_min],
+            "max": [v_max],
+            "mean": [v_mean],
+            "media": [v_median],
+            "std": [v_std],
+            "var": [v_var],
+            "time_of_min": [time_of_min],
+            "time_of_max": [time_of_max],
         }
 
         self.stats = pa.Table.from_pydict(stats)

@@ -6,12 +6,13 @@ import argparse
 from datetime import datetime, timedelta
 import pathlib
 import tomllib
+from zoneinfo import ZoneInfo
 
 import aio_stats
 
 
 def main(opts: argparse.Namespace) -> None:
-    now = datetime.now()
+    now = datetime.now(ZoneInfo(opts.timezone))
     yesterday = now - timedelta(days=1)
 
     config_file: pathlib.Path = opts.config_file.expanduser()
@@ -29,6 +30,7 @@ def main(opts: argparse.Namespace) -> None:
 
     for entry in cdict:
         for feed in cdict[entry]["feeds"]:
+            print(f"Processing {entry}.{feed}")
             data = aioclient.fetch_data(f"{entry}.{feed}", max_points=350)
             tdata = aioclient.transform_data(data, opts.timezone)
             stats = aio_stats.StatsMaker()
