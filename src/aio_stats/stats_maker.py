@@ -15,6 +15,7 @@ __all__ = ["StatsMaker"]
 class StatsMaker:
 
     def __init__(self) -> None:
+        """Class constructor."""
         self.df: pd.DataFrame = None
         self.timestamp: datetime = None
         self.stats: pa.Table = None
@@ -22,6 +23,15 @@ class StatsMaker:
     def create_dataframe(
         self, data: list[tuple[datetime, float]], data_column: str
     ) -> None:
+        """Take data and create dataframe.
+
+        Parameters
+        ----------
+        data : list[tuple[datetime, float]]
+            The input data.
+        data_column : str
+            The name of the feed for the column.
+        """
         self.df = pd.DataFrame.from_records(
             data, index="datetime", columns=["datetime", data_column]
         )
@@ -29,6 +39,17 @@ class StatsMaker:
     def filter_time(
         self, begin: datetime, end: datetime, day_bound: bool = False
     ) -> None:
+        """Filter data by a time ranage.
+
+        Parameters
+        ----------
+        begin : datetime
+            The start time for the filter.
+        end : datetime
+            The end time for the filter.
+        day_bound : bool, optional
+            Remove time portion of timestamps, by default False
+        """
         if day_bound:
             self.timestamp = begin.date()
             end = end.date()
@@ -37,6 +58,7 @@ class StatsMaker:
         self.df = self.df.loc[begin:end]
 
     def make_stats(self) -> None:
+        """Calculate statistics from data."""
         column = self.df.columns[0]
         v_min = self.df.min().values[0]
         v_max = self.df.max().values[0]
@@ -56,12 +78,28 @@ class StatsMaker:
             "var": [v_var],
             "time_of_min": [time_of_min],
             "time_of_max": [time_of_max],
+            "day": [self.timestamp.day],
         }
 
         self.stats = pa.Table.from_pydict(stats)
 
     def save_stats(self, top_level: pathlib.Path, sub_path: str) -> None:
-        tpath = top_level / sub_path / self.df.columns[0] / str(self.timestamp.year)
+        """Save the calculated statistics to file.
+
+        Parameters
+        ----------
+        top_level : pathlib.Path
+            Main directory where the data should be saved.
+        sub_path : str
+            Sensor location.
+        """
+        tpath = (
+            top_level
+            / sub_path
+            / self.df.columns[0]
+            / str(self.timestamp.year)
+            / f"{self.timestamp.strftime('%m')}"
+        )
         tpath.mkdir(parents=True, exist_ok=True)
-        outfile = tpath / f"{self.timestamp.strftime('%m_%d')}.parquet"
+        outfile = tpath / f"{self.timestamp.strftime('%d')}.parquet"
         pq.write_table(self.stats, outfile)
