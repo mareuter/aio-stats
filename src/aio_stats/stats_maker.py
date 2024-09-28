@@ -51,8 +51,8 @@ class StatsMaker:
             Remove time portion of timestamps, by default False
         """
         if day_bound:
-            self.timestamp = begin.replace(hour=0, minutes=0, second=0)
-            end = end.replace(hour=0, minutes=0, second=0)
+            self.timestamp = begin.replace(hour=0, minute=0, second=0)
+            end = end.replace(hour=0, minute=0, second=0)
         else:
             self.timestamp = begin
         self.df = self.df.loc[begin:end]
