@@ -28,6 +28,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+plot = [
+    "notebook",
+    "plotly"
+]
 dev = [
     "pre-commit"
 ]
