@@ -48,3 +48,8 @@ line-length = 110
     "F401",
     "F403"
 ]
+"src/aio_stats/plotting/__init__.py" = [
+    "E402",
+    "F401",
+    "F403"
+]
