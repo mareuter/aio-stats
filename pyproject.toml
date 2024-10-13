@@ -29,7 +29,9 @@ dependencies = [
 
 [project.optional-dependencies]
 plot = [
+    "jupytext",
     "notebook",
+    "papermill",
     "plotly"
 ]
 dev = [
@@ -38,6 +40,7 @@ dev = [
 
 [project.scripts]
 collect_stats = "aio_stats.collect_stats:runner"
+env_runner = "aio_stats.plotting.env_runner:runner"
 
 [tool.ruff]
 line-length = 110
