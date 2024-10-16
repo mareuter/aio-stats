@@ -56,7 +56,7 @@ layout = dict(height=500, width=700)
 ```
 
 ```python
-md(f"# <center>{location.title()} Environment for {m.name.title()} {year}</center>")
+md(f"# {location.title()} Environment for {m.name.title()} {year}")
 ```
 
 ```python
