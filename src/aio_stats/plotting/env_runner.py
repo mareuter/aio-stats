@@ -4,6 +4,7 @@
 
 import argparse
 import calendar
+from datetime import datetime
 from importlib.resources import files
 import pathlib
 
@@ -18,12 +19,20 @@ __all__ = ["runner"]
 
 
 def main(opts: argparse.Namespace) -> None:
+    if opts.year is None and opts.month is None:
+        local_time = datetime.now()
+        year = local_time.year
+        month = local_time.month
+    else:
+        year = opts.year
+        month = opts.month
+
     pio.templates.default = "plotly_dark"
     data_path = f"~/Documents/SensorData/{opts.location}"
-    temp_data_path = f"{data_path}/temperature/{opts.year}/{opts.month:02}"
-    rh_data_path = f"{data_path}/relative-humidity/{opts.year}/{opts.month:02}"
+    temp_data_path = f"{data_path}/temperature/{year}/{month:02}"
+    rh_data_path = f"{data_path}/relative-humidity/{year}/{month:02}"
 
-    m = calendar.Month(opts.month)
+    m = calendar.Month(month)
 
     temp_data = DataReader(pathlib.Path(temp_data_path))
     rh_data = DataReader(pathlib.Path(rh_data_path))
@@ -50,7 +59,7 @@ def main(opts: argparse.Namespace) -> None:
 
     template_data = {
         "location": opts.location.title(),
-        "year": opts.year,
+        "year": year,
         "month": m.name.title(),
         "fig1": fig1.to_html(full_html=False),
         "fig2": fig2.to_html(full_html=False),
@@ -58,9 +67,7 @@ def main(opts: argparse.Namespace) -> None:
         "fig4": fig4.to_html(full_html=False),
     }
 
-    output_html = pathlib.Path(
-        f"{opts.location.title()}_{opts.year}{opts.month:02d}.html"
-    )
+    output_html = pathlib.Path(f"{opts.location.title()}_{year}{month:02d}.html")
     input_template = files("aio_stats.data").joinpath("stats_plotting.html")
 
     with output_html.open("w", encoding="utf-8") as ofile:
@@ -75,9 +82,9 @@ def runner() -> None:
         "location", help="Provide the location for the environment plot generation."
     )
 
-    parser.add_argument("year", type=int, help="The year to read.")
+    parser.add_argument("--year", type=int, help="The year to read.")
 
-    parser.add_argument("month", type=int, help="The month to read.")
+    parser.add_argument("--month", type=int, help="The month to read.")
 
     args = parser.parse_args()
 
