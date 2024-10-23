@@ -40,7 +40,6 @@ def make_min_max_dist(type: str, fig: go.Figure, df: pd.DataFrame) -> None:
     fig.add_trace(max_time_trace)
     fig.update_xaxes(title_text="Hour in Day", range=(0, 24))
     fig.update_layout(title=dict(text=plot_title, xanchor="center", x=0.5))
-    fig.show()
 
 
 def make_stats_trend(type: str, fig: go.Figure, df: pd.DataFrame) -> None:
@@ -55,7 +54,7 @@ def make_stats_trend(type: str, fig: go.Figure, df: pd.DataFrame) -> None:
 
     mean_trace = go.Scatter(
         mode="markers",
-        marker_color="black",
+        marker_color="white",
         x=df.day,
         y=df["mean"],
         error_y=dict(type="data", array=df["std"], visible=True),
@@ -71,4 +70,3 @@ def make_stats_trend(type: str, fig: go.Figure, df: pd.DataFrame) -> None:
     fig.update_layout(
         title=dict(text=plot_title, xanchor="center", x=0.5), showlegend=False
     )
-    fig.show()

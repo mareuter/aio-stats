@@ -3,64 +3,69 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
+import calendar
+from importlib.resources import files
 import pathlib
-import time
 
-import nbconvert
-import papermill as pm
-from traitlets.config import Config
+from jinja2 import Template
+import plotly.graph_objects as go
+import plotly.io as pio
 
-from .process_helpers import run_cmd
+from ..data_reader import DataReader
+from .creators import make_min_max_dist, make_stats_trend
 
 __all__ = ["runner"]
 
 
 def main(opts: argparse.Namespace) -> None:
+    pio.templates.default = "plotly_dark"
+    data_path = f"~/Documents/SensorData/{opts.location}"
+    temp_data_path = f"{data_path}/temperature/{opts.year}/{opts.month:02}"
+    rh_data_path = f"{data_path}/relative-humidity/{opts.year}/{opts.month:02}"
 
-    notebook_stem = "Environment_Stats"
-    temp_notebook = pathlib.Path(f"{notebook_stem}_temp.ipynb")
+    m = calendar.Month(opts.month)
 
-    convert_to = [
-        "jupytext",
-        "--to",
-        "ipynb",
-        "-o",
-        temp_notebook,
-        f"md_notebooks/{notebook_stem}.md",
-    ]
-    output = run_cmd(convert_to)
-    print(output)
+    temp_data = DataReader(pathlib.Path(temp_data_path))
+    rh_data = DataReader(pathlib.Path(rh_data_path))
 
-    output_notebook = (
-        f"{notebook_stem}_{opts.location.title()}_{opts.year}{opts.month:02d}.ipynb"
+    temp_data.read_month()
+    rh_data.read_month()
+
+    temp_df = temp_data.table.to_pandas()
+    rh_df = rh_data.table.to_pandas()
+
+    layout = dict(height=500, width=700)
+
+    fig1 = go.Figure(layout=layout)
+    make_stats_trend("Temp", fig1, temp_df)
+
+    fig2 = go.Figure(layout=layout)
+    make_min_max_dist("Temp", fig2, temp_df)
+
+    fig3 = go.Figure(layout=layout)
+    make_stats_trend("RH", fig3, rh_df)
+
+    fig4 = go.Figure(layout=layout)
+    make_min_max_dist("RH", fig4, rh_df)
+
+    template_data = {
+        "location": opts.location.title(),
+        "year": opts.year,
+        "month": m.name.title(),
+        "fig1": fig1.to_html(full_html=False),
+        "fig2": fig2.to_html(full_html=False),
+        "fig3": fig3.to_html(full_html=False),
+        "fig4": fig4.to_html(full_html=False),
+    }
+
+    output_html = pathlib.Path(
+        f"{opts.location.title()}_{opts.year}{opts.month:02d}.html"
     )
-    output_html = output_notebook.replace("ipynb", "html")
+    input_template = files("aio_stats.data").joinpath("stats_plotting.html")
 
-    report_notebook = pathlib.Path(output_notebook)
-    report_output = pathlib.Path(output_html)
-
-    pm.execute_notebook(
-        temp_notebook,
-        output_notebook,
-        parameters=dict(location=opts.location, year=opts.year, month=opts.month),
-    )
-
-    c = Config()
-    c.template_file = "full"
-    c.HTMLExporter.exclude_input = True
-    c.HTMLExporter.exclude_output_prompt = True
-
-    converter = nbconvert.HTMLExporter(config=c)
-    body, _ = converter.from_filename(output_notebook)
-    with report_output.open("w") as ofile:
-        ofile.writelines(body)
-
-    while True:
-        if report_output.exists():
-            report_notebook.unlink()
-            break
-        time.sleep(0.01)
-    temp_notebook.unlink()
+    with output_html.open("w", encoding="utf-8") as ofile:
+        j2_template = Template(input_template.read_text())
+        ofile.write((j2_template.render(template_data)))
 
 
 def runner() -> None:
