@@ -1,0 +1,31 @@
+<!--
+SPDX-FileCopyrightText: 2024 Michael Reuter
+
+SPDX-License-Identifier: MIT
+-->
+<!DOCTYPE html>
+<html class="theme-dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sensor Data</title>
+    <link rel="stylesheet" href="../../../static/css/bulma.css">
+  </head>
+  <body>
+    <h1>{{ location }} Environment for {{ month }} {{ year }}</h1>
+    <div class="grid is-col-min-5 is-gap-5 m-6 p-4">
+        <div class="cell">
+            {{ fig1 }}
+        </div>
+        <div class="cell">
+            {{ fig2 }}
+        </div>
+        <div class="cell">
+            {{ fig3 }}
+        </div>
+        <div class="cell">
+            {{ fig4 }}
+        </div>
+    </div>
+  </body>
+</html>
