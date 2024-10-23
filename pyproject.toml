@@ -29,9 +29,7 @@ dependencies = [
 
 [project.optional-dependencies]
 plot = [
-    "jupytext",
-    "notebook",
-    "papermill",
+    "jinja2",
     "plotly"
 ]
 dev = [
