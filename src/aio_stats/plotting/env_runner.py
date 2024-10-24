@@ -7,6 +7,7 @@ import calendar
 from datetime import datetime
 from importlib.resources import files
 import pathlib
+import tomllib
 
 from jinja2 import Template
 import plotly.graph_objects as go
@@ -19,6 +20,13 @@ __all__ = ["runner"]
 
 
 def main(opts: argparse.Namespace) -> None:
+    # Plotting things that only need to be done once.
+    pio.templates.default = "plotly_dark"
+    layout = dict(height=500, width=700)
+
+    input_template = files("aio_stats.data").joinpath("stats_plotting.html")
+    j2_template = Template(input_template.read_text())
+
     if opts.year is None and opts.month is None:
         local_time = datetime.now()
         year = local_time.year
@@ -27,64 +35,63 @@ def main(opts: argparse.Namespace) -> None:
         year = opts.year
         month = opts.month
 
-    pio.templates.default = "plotly_dark"
-    data_path = f"~/Documents/SensorData/{opts.location}"
-    temp_data_path = f"{data_path}/temperature/{year}/{month:02}"
-    rh_data_path = f"{data_path}/relative-humidity/{year}/{month:02}"
-
     m = calendar.Month(month)
 
-    temp_data = DataReader(pathlib.Path(temp_data_path))
-    rh_data = DataReader(pathlib.Path(rh_data_path))
+    stat_feeds_file = files("aio_stats.data").joinpath("stat_feeds.toml")
+    with stat_feeds_file.open("rb") as cfile:
+        stat_feeds = tomllib.load(cfile)
 
-    temp_data.read_month()
-    rh_data.read_month()
+    if opts.location is not None:
+        locations = [opts.location]
+    else:
+        locations = list(stat_feeds["locations"])
 
-    temp_df = temp_data.table.to_pandas()
-    rh_df = rh_data.table.to_pandas()
+    for location in locations:
 
-    layout = dict(height=500, width=700)
+        template_data = {
+            "location": location.title(),
+            "year": year,
+            "month": m.name.title(),
+            "figs": [],
+        }
 
-    fig1 = go.Figure(layout=layout)
-    make_stats_trend("Temp", fig1, temp_df)
+        top_data_path = f"~/Documents/SensorData/{location}"
 
-    fig2 = go.Figure(layout=layout)
-    make_min_max_dist("Temp", fig2, temp_df)
+        for feed in stat_feeds["locations"][location]["feeds"]:
+            data_path = f"{top_data_path}/{feed}/{year}/{month:02}"
 
-    fig3 = go.Figure(layout=layout)
-    make_stats_trend("RH", fig3, rh_df)
+            data = DataReader(pathlib.Path(data_path))
+            data.read_month()
+            df = data.table.to_pandas()
 
-    fig4 = go.Figure(layout=layout)
-    make_min_max_dist("RH", fig4, rh_df)
+            plot_functions = stat_feeds["plotting"][feed]
+            for plot_function in plot_functions:
+                short_name = stat_feeds["shorts"][feed]
+                fig = go.Figure(layout=layout)
+                if plot_function == "stats_trend":
+                    make_stats_trend(short_name, fig, df)
+                if plot_function == "min_max_dist":
+                    make_min_max_dist(short_name, fig, df)
+                template_data["figs"].append(fig.to_html(full_html=False))
 
-    template_data = {
-        "location": opts.location.title(),
-        "year": year,
-        "month": m.name.title(),
-        "fig1": fig1.to_html(full_html=False),
-        "fig2": fig2.to_html(full_html=False),
-        "fig3": fig3.to_html(full_html=False),
-        "fig4": fig4.to_html(full_html=False),
-    }
+        output_html = pathlib.Path(f"{location.title()}_{year}{month:02d}.html")
 
-    output_html = pathlib.Path(f"{opts.location.title()}_{year}{month:02d}.html")
-    input_template = files("aio_stats.data").joinpath("stats_plotting.html")
-
-    with output_html.open("w", encoding="utf-8") as ofile:
-        j2_template = Template(input_template.read_text())
-        ofile.write((j2_template.render(template_data)))
+        with output_html.open("w", encoding="utf-8") as ofile:
+            ofile.write((j2_template.render(template_data)))
 
 
 def runner() -> None:
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "location", help="Provide the location for the environment plot generation."
+        "--location", help="Provide the location for the environment plot generation."
     )
 
     parser.add_argument("--year", type=int, help="The year to read.")
 
     parser.add_argument("--month", type=int, help="The month to read.")
+
+    parser.add_argument("--output-dir", type=pathlib.Path, help="Directory to move.")
 
     args = parser.parse_args()
 
