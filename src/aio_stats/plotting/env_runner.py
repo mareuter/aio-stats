@@ -7,6 +7,7 @@ import calendar
 from datetime import datetime
 from importlib.resources import files
 import pathlib
+import shutil
 import tomllib
 
 from jinja2 import Template
@@ -36,6 +37,7 @@ def main(opts: argparse.Namespace) -> None:
         month = opts.month
 
     m = calendar.Month(month)
+    m_str = f"{month:02d}"
 
     stat_feeds_file = files("aio_stats.data").joinpath("stat_feeds.toml")
     with stat_feeds_file.open("rb") as cfile:
@@ -58,7 +60,7 @@ def main(opts: argparse.Namespace) -> None:
         top_data_path = f"~/Documents/SensorData/{location}"
 
         for feed in stat_feeds["locations"][location]["feeds"]:
-            data_path = f"{top_data_path}/{feed}/{year}/{month:02}"
+            data_path = f"{top_data_path}/{feed}/{year}/{m_str}"
 
             data = DataReader(pathlib.Path(data_path))
             data.read_month()
@@ -74,10 +76,19 @@ def main(opts: argparse.Namespace) -> None:
                     make_min_max_dist(short_name, fig, df)
                 template_data["figs"].append(fig.to_html(full_html=False))
 
-        output_html = pathlib.Path(f"{location.title()}_{year}{month:02d}.html")
+        output_html = pathlib.Path(f"{location.title()}_{year}{m_str}.html")
 
         with output_html.open("w", encoding="utf-8") as ofile:
             ofile.write((j2_template.render(template_data)))
+
+    if opts.output_dir is not None:
+        full_path = opts.output_dir.expanduser() / str(year) / m_str
+        if not full_path.exists():
+            full_path.mkdir(parents=True)
+
+        curdir = pathlib.Path(".")
+        for html_file in curdir.glob("*.html"):
+            shutil.move(html_file, full_path)
 
 
 def runner() -> None:
@@ -91,7 +102,9 @@ def runner() -> None:
 
     parser.add_argument("--month", type=int, help="The month to read.")
 
-    parser.add_argument("--output-dir", type=pathlib.Path, help="Directory to move.")
+    parser.add_argument(
+        "--output-dir", type=pathlib.Path, help="Directory to move output to."
+    )
 
     args = parser.parse_args()
 
