@@ -1,0 +1,22 @@
+<!--
+SPDX-FileCopyrightText: 2024 Michael Reuter
+
+SPDX-License-Identifier: MIT
+--><!DOCTYPE html>
+<html class="theme-dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Yearly Sensor Data Layout</title>
+    <link rel="stylesheet" href="../static/css/bulma.css">
+  </head>
+  <body>
+    <div class="grid is-col-min-5 is-gap-5 m-6 p-4">
+        {% for year in years %}
+        <div class="cell">
+            <a href="{{year}}/index.html" class="button is-large has-background-primary-dark">{{year}}</a>
+        </div>
+        {% endfor %}
+    </div>
+  </body>
+</html>
