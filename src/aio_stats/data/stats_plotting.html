@@ -15,18 +15,11 @@ SPDX-License-Identifier: MIT
     <h1 class="is-size-2 has-text-centered">{{ location }} Environment for {{ month }} {{ year }}</h1>
     <div class="fixed-grid">
         <div class="grid has-2-cols m-6">
+            {% for fig in figs %}
             <div class="cell">
-                {{ fig1 }}
+                {{ fig }}
             </div>
-            <div class="cell">
-                {{ fig2 }}
-            </div>
-            <div class="cell">
-                {{ fig3 }}
-            </div>
-            <div class="cell">
-                {{ fig4 }}
-            </div>
+            {% endfor %}
         </div>
     </div>
   </body>
