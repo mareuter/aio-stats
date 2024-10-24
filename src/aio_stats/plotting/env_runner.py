@@ -88,7 +88,8 @@ def main(opts: argparse.Namespace) -> None:
 
         curdir = pathlib.Path(".")
         for html_file in curdir.glob("*.html"):
-            shutil.move(html_file, full_path)
+            shutil.copy(html_file, full_path)
+            html_file.unlink()
 
 
 def runner() -> None:
