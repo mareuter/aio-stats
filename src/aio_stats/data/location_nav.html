@@ -12,12 +12,14 @@ SPDX-License-Identifier: MIT
     <link rel="stylesheet" href="../../../static/css/bulma.css">
   </head>
   <body>
-    <div class="grid is-col-min-5 is-gap-5 m-6 p-4">
-        {% for hfile, name in locations %}
-        <div class="cell">
-            <a href="{{hfile}}" class="button is-large has-background-primary-dark">{{name}}</a>
+    <div class="fixed-grid has-1-cols has-2-cols-tablet">
+        <div class="grid m-3">
+            {% for hfile, name in locations %}
+            <div class="cell py-2">
+                <a href="{{hfile}}" class="button is-flex is-large has-background-primary-dark">{{name}}</a>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
   </body>
 </html>
