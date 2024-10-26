@@ -23,7 +23,7 @@ __all__ = ["runner"]
 def main(opts: argparse.Namespace) -> None:
     # Plotting things that only need to be done once.
     pio.templates.default = "plotly_dark"
-    layout = dict(height=500, width=700)
+    layout = dict(height=250, width=350)
 
     input_template = files("aio_stats.data").joinpath("stats_plotting.html")
     j2_template = Template(input_template.read_text())

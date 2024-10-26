@@ -13,10 +13,10 @@ SPDX-License-Identifier: MIT
   </head>
   <body>
     <h1 class="is-size-5 is-size-2-tablet has-text-centered">{{ location }} Environment for {{ month }} {{ year }}</h1>
-    <div class="fixed-grid has-1-cols has-2-cols-desktop">
-        <div class="grid m-6">
+    <div class="fixed-grid has-1-cols has-2-cols-tablet">
+        <div class="grid m-2 m-3-tablet">
             {% for fig in figs %}
-            <div class="cell">
+            <div class="cell is-flex flex-grow">
                 {{ fig }}
             </div>
             {% endfor %}
