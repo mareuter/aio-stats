@@ -16,8 +16,10 @@ SPDX-License-Identifier: MIT
     <div class="fixed-grid has-1-cols has-2-cols-tablet">
         <div class="grid m-2 m-3-tablet">
             {% for fig in figs %}
-            <div class="cell is-flex flex-grow">
-                {{ fig }}
+            <div class="cell">
+                <figure class="image is-4by3">
+                    <img src="{{ fig }}" />
+                </figure>
             </div>
             {% endfor %}
         </div>

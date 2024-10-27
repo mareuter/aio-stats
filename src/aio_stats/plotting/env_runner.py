@@ -23,7 +23,7 @@ __all__ = ["runner"]
 def main(opts: argparse.Namespace) -> None:
     # Plotting things that only need to be done once.
     pio.templates.default = "plotly_dark"
-    layout = dict(height=250, width=350)
+    layout = dict(height=525, width=700)
 
     input_template = files("aio_stats.data").joinpath("stats_plotting.html")
     j2_template = Template(input_template.read_text())
@@ -58,6 +58,9 @@ def main(opts: argparse.Namespace) -> None:
         }
 
         top_data_path = f"~/Documents/SensorData/{location}"
+        location_stem = f"{location.title()}_{year}{m_str}"
+        fig_path = pathlib.Path(location_stem)
+        fig_path.mkdir(exist_ok=True)
 
         for feed in stat_feeds["locations"][location]["feeds"]:
             data_path = f"{top_data_path}/{feed}/{year}/{m_str}"
@@ -74,9 +77,12 @@ def main(opts: argparse.Namespace) -> None:
                     make_stats_trend(short_name, fig, df)
                 if plot_function == "min_max_dist":
                     make_min_max_dist(short_name, fig, df)
-                template_data["figs"].append(fig.to_html(full_html=False))
+                fig_file: pathlib.Path = fig_path / f"{feed}_{plot_function}.svg"
+                # template_data["figs"].append(fig.to_html(full_html=False))
+                fig.write_image(fig_file)
+                template_data["figs"].append(fig_file)
 
-        output_html = pathlib.Path(f"{location.title()}_{year}{m_str}.html")
+        output_html = pathlib.Path(f"{location_stem}.html")
 
         with output_html.open("w", encoding="utf-8") as ofile:
             ofile.write((j2_template.render(template_data)))
