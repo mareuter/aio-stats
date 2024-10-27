@@ -48,6 +48,7 @@ def main(opts: argparse.Namespace) -> None:
     else:
         locations = list(stat_feeds["locations"])
 
+    fig_paths = []
     for location in locations:
 
         template_data = {
@@ -61,6 +62,7 @@ def main(opts: argparse.Namespace) -> None:
         location_stem = f"{location.title()}_{year}{m_str}"
         fig_path = pathlib.Path(location_stem)
         fig_path.mkdir(exist_ok=True)
+        fig_paths.append(fig_path)
 
         for feed in stat_feeds["locations"][location]["feeds"]:
             data_path = f"{top_data_path}/{feed}/{year}/{m_str}"
@@ -78,7 +80,6 @@ def main(opts: argparse.Namespace) -> None:
                 if plot_function == "min_max_dist":
                     make_min_max_dist(short_name, fig, df)
                 fig_file: pathlib.Path = fig_path / f"{feed}_{plot_function}.svg"
-                # template_data["figs"].append(fig.to_html(full_html=False))
                 fig.write_image(fig_file)
                 template_data["figs"].append(fig_file)
 
@@ -96,6 +97,16 @@ def main(opts: argparse.Namespace) -> None:
         for html_file in curdir.glob("*.html"):
             shutil.copy(html_file, full_path)
             html_file.unlink()
+
+        for p in fig_paths:
+            try:
+                shutil.copytree(
+                    p, full_path / p, copy_function=shutil.copy, dirs_exist_ok=True
+                )
+            except OSError:
+                # This is shutil.copy trying to copy the directory.
+                pass
+            shutil.rmtree(p)
 
 
 def runner() -> None:
