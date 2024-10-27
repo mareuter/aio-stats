@@ -29,8 +29,9 @@ dependencies = [
 
 [project.optional-dependencies]
 plot = [
+    "kaleido",
     "jinja2",
-    "plotly"
+    "plotly",
 ]
 dev = [
     "pre-commit"
