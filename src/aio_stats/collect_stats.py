@@ -19,13 +19,6 @@ def main(opts: argparse.Namespace) -> None:
     with config_file.open("rb") as cfile:
         cdict = tomllib.load(cfile)
 
-    # # Create top level-directories
-    # for entry in cdict:
-    #     for feed in cdict[entry]["feeds"]:
-    #         opath = opts.output_dir / entry / feed / yesterday.year
-    #         if not opath.exists():
-    #             opath.mkdir(parents=True)
-
     aioclient = aio_stats.AioClient()
 
     for entry in cdict:
