@@ -1,0 +1,25 @@
+<!--
+SPDX-FileCopyrightText: 2024 Michael Reuter
+
+SPDX-License-Identifier: MIT
+-->
+<!DOCTYPE html>
+<html class="theme-dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Monthly Sensor Data Layout</title>
+    <link rel="stylesheet" href="../../static/css/bulma.css">
+  </head>
+  <body>
+    <div class="fixed-grid has-1-cols has-2-cols-tablet">
+        <div class="grid m-3">
+            {% for month, name in months %}
+            <div class="cell py-2">
+                <a href="{{month}}/index.html" class="button is-flex is-large has-background-primary-dark">{{name}}</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2024 Michael Reuter
+#
+# SPDX-License-Identifier: MIT
+
+[locations]
+
+[locations.office]
+feeds = [
+    "temperature",
+    "relative-humidity"
+]
+
+[plotting]
+temperature = ["stats_trend", "min_max_dist"]
+relative-humidity = ["stats_trend", "min_max_dist"]
+
+[shorts]
+temperature = "Temp"
+relative-humidity = "RH"
