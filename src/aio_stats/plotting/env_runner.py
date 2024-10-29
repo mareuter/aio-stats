@@ -40,8 +40,7 @@ def main(opts: argparse.Namespace) -> None:
     m_str = f"{month:02d}"
 
     stat_feeds_file = files("aio_stats.data").joinpath("stat_feeds.toml")
-    with stat_feeds_file.open("rb") as cfile:
-        stat_feeds = tomllib.load(cfile)
+    stat_feeds = tomllib.loads(stat_feeds_file.read_text())
 
     if opts.location is not None:
         locations = [opts.location]
