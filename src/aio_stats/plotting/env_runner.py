@@ -4,7 +4,7 @@
 
 import argparse
 import calendar
-from datetime import datetime
+from datetime import datetime, timedelta
 from importlib.resources import files
 import pathlib
 import shutil
@@ -30,6 +30,8 @@ def main(opts: argparse.Namespace) -> None:
 
     if opts.year is None and opts.month is None:
         local_time = datetime.now()
+        if opts.shift_day:
+            local_time -= timedelta(days=1)
         year = local_time.year
         month = local_time.month
     else:
@@ -121,6 +123,12 @@ def runner() -> None:
 
     parser.add_argument(
         "--output-dir", type=pathlib.Path, help="Directory to move output to."
+    )
+
+    parser.add_argument(
+        "--shift-day",
+        action="store_true",
+        help="Shift the time used by a day to support data collection.",
     )
 
     args = parser.parse_args()
