@@ -45,7 +45,7 @@ page_maker = "aio_stats.plotting.page_maker:runner"
 [tool.ruff]
 line-length = 110
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "src/aio_stats/__init__.py" = [
     "E402",
     "F401",
