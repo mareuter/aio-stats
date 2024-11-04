@@ -11,8 +11,8 @@ feeds = [
 ]
 
 [plotting]
-temperature = ["stats_trend", "min_max_dist"]
-relative-humidity = ["stats_trend", "min_max_dist"]
+temperature = ["stats_trend", "min_max_scatter"]
+relative-humidity = ["stats_trend", "min_max_scatter"]
 
 [shorts]
 temperature = "Temp"
