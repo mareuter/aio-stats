@@ -7,10 +7,12 @@ import pathlib
 
 from Adafruit_IO import Data
 
+from .transform_data_mixin import TransformDataMixin
+
 __all__ = ["AioFile"]
 
 
-class AioFile:
+class AioFile(TransformDataMixin):
 
     def __init__(self, data_file: pathlib.Path) -> None:
         """Class constructor."""
@@ -26,14 +28,14 @@ class AioFile:
         """
         data_list = []
         with self.data_file_path.open() as ifile:
-            creader = csv.reader(ifile)
+            creader = csv.DictReader(ifile)
             for row in creader:
-                created_time = "T".join(row[3].split()[:-1]) + "Z"
+                created_time = "T".join(row["created_at"].split()[:-1]) + "Z"
                 data_list.append(
                     Data(
-                        id=row[0],
-                        value=float(row[1]),
-                        feed_id=int(row[2]),
+                        id=row["id"],
+                        value=float(row["value"]),
+                        feed_id=int(row["feed_id"]),
                         created_at=created_time,
                     )
                 )
