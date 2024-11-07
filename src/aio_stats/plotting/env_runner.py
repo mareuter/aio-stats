@@ -14,8 +14,8 @@ from jinja2 import Template
 import plotly.graph_objects as go
 import plotly.io as pio
 
+from . import creators
 from ..data_reader import DataReader
-from .creators import make_min_max_scatter, make_stats_trend
 
 __all__ = ["runner"]
 
@@ -76,10 +76,8 @@ def main(opts: argparse.Namespace) -> None:
             for plot_function in plot_functions:
                 short_name = stat_feeds["shorts"][feed]
                 fig = go.Figure(layout=layout)
-                if plot_function == "stats_trend":
-                    make_stats_trend(short_name, fig, df)
-                if plot_function == "min_max_scatter":
-                    make_min_max_scatter(short_name, fig, df)
+                plotter = getattr(creators, f"make_{plot_function}")
+                plotter(short_name, fig, df)
                 fig_file: pathlib.Path = fig_path / f"{feed}_{plot_function}.svg"
                 fig.write_image(fig_file)
                 template_data["figs"].append(fig_file)
