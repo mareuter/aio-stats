@@ -9,6 +9,8 @@ feeds = [
     "temperature",
     "relative-humidity"
 ]
+# Time between points in minutes
+delay = 5
 
 [plotting]
 temperature = ["stats_trend", "min_max_scatter"]
