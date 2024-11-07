@@ -41,6 +41,7 @@ dev = [
 collect_stats = "aio_stats.collect_stats:runner"
 env_runner = "aio_stats.plotting.env_runner:runner"
 page_maker = "aio_stats.plotting.page_maker:runner"
+plot_raw = "aio_stats.plotting.plot_raw:runner"
 
 [tool.ruff]
 line-length = 110
