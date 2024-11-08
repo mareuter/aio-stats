@@ -88,6 +88,11 @@ def make_stats_trend(type: str, fig: go.Figure, df: pd.DataFrame) -> None:
         y_axis_title = "Relative Humidity (%)"
         plot_title = "Relative Humidity Trend"
 
+    if df.day.size == 1:
+        mode = "markers"
+    else:
+        mode = "lines"
+
     mean_trace = go.Scatter(
         mode="markers",
         marker_color="white",
@@ -95,9 +100,16 @@ def make_stats_trend(type: str, fig: go.Figure, df: pd.DataFrame) -> None:
         y=df["mean"],
         error_y=dict(type="data", array=df["std"], visible=True),
     )
-    max_trace = go.Scatter(mode="lines", line=dict(color="blue"), x=df.day, y=df["max"])
-    min_trace = go.Scatter(mode="lines", line=dict(color="blue"), x=df.day, y=df["min"])
+    median_trace = go.Scatter(
+        mode=mode,
+        marker_color="green",
+        x=df.day,
+        y=df["median"],
+    )
+    max_trace = go.Scatter(mode=mode, line=dict(color="blue"), x=df.day, y=df["max"])
+    min_trace = go.Scatter(mode=mode, line=dict(color="blue"), x=df.day, y=df["min"])
 
+    fig.add_trace(median_trace)
     fig.add_trace(mean_trace)
     fig.add_trace(max_trace)
     fig.add_trace(min_trace)
