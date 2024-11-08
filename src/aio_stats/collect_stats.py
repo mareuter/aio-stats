@@ -4,20 +4,18 @@
 
 import argparse
 from datetime import datetime, timedelta
-from importlib.resources import files
 import pathlib
-import tomllib
 from zoneinfo import ZoneInfo
 
 import aio_stats
+from .helpers import load_feed_settings
 
 
 def main(opts: argparse.Namespace) -> None:
     now = datetime.now(ZoneInfo(opts.timezone))
     yesterday = now - timedelta(days=1)
 
-    stat_feeds_file = files("aio_stats.data").joinpath("stat_feeds.toml")
-    stat_feeds = tomllib.loads(stat_feeds_file.read_text())
+    stat_feeds = load_feed_settings()
 
     if opts.location is not None:
         locations = [opts.location]

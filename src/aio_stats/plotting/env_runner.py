@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 from importlib.resources import files
 import pathlib
 import shutil
-import tomllib
 
 from jinja2 import Template
 import plotly.graph_objects as go
@@ -16,6 +15,7 @@ import plotly.io as pio
 
 from . import creators
 from ..data_reader import DataReader
+from ..helpers import load_feed_settings
 
 __all__ = ["runner"]
 
@@ -41,8 +41,7 @@ def main(opts: argparse.Namespace) -> None:
     m = calendar.Month(month)
     m_str = f"{month:02d}"
 
-    stat_feeds_file = files("aio_stats.data").joinpath("stat_feeds.toml")
-    stat_feeds = tomllib.loads(stat_feeds_file.read_text())
+    stat_feeds = load_feed_settings()
 
     if opts.location is not None:
         locations = [opts.location]
