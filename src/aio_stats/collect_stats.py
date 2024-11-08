@@ -7,8 +7,9 @@ from datetime import datetime, timedelta
 import pathlib
 from zoneinfo import ZoneInfo
 
-import aio_stats
+from .aio_client import AioClient
 from .helpers import load_feed_settings
+from .stats_maker import StatsMaker
 
 
 def main(opts: argparse.Namespace) -> None:
@@ -22,14 +23,14 @@ def main(opts: argparse.Namespace) -> None:
     else:
         locations = list(stat_feeds["locations"])
 
-    aioclient = aio_stats.AioClient()
+    aioclient = AioClient()
 
     for location in locations:
         for feed in stat_feeds["locations"][location]["feeds"]:
             print(f"Processing {location}.{feed}")
             data = aioclient.fetch_data(f"{location}.{feed}", max_points=350)
             tdata = aioclient.transform_data(data, opts.timezone)
-            stats = aio_stats.StatsMaker()
+            stats = StatsMaker()
             stats.create_dataframe(tdata, feed)
             stats.filter_time(yesterday, now, opts.day_bound)
             stats.make_stats()
