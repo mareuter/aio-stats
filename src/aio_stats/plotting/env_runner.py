@@ -26,7 +26,9 @@ def main(opts: argparse.Namespace) -> None:
     layout = dict(height=525, width=700)
 
     input_template = files("aio_stats.data").joinpath("stats_plotting.html")
-    j2_template = Template(input_template.read_text())
+    j2_template = Template(
+        input_template.read_text(), trim_blocks=True, lstrip_blocks=True
+    )
 
     if opts.year is None and opts.month is None:
         local_time = datetime.now()

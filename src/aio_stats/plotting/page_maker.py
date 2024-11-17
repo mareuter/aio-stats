@@ -23,7 +23,9 @@ def main(opts: argparse.Namespace) -> None:
             "years": [],
         }
         year_nav_template = files("aio_stats.data").joinpath("year_nav.html")
-        j2_template = Template(year_nav_template.read_text())
+        j2_template = Template(
+            year_nav_template.read_text(), trim_blocks=True, lstrip_blocks=True
+        )
         for ydir in opts.data_dir.iterdir():
             if ydir.is_dir():
                 template_data["years"].append(ydir.name)
