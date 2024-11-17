@@ -41,10 +41,12 @@ def main(opts: argparse.Namespace) -> None:
         year = local_time.year
 
         month_nav_template = files("aio_stats.data").joinpath("month_nav.html")
-        j2_template = Template(month_nav_template.read_text())
+        j2_template = Template(
+            month_nav_template.read_text(), trim_blocks=True, lstrip_blocks=True
+        )
 
         month_path: pathlib.Path = opts.data_dir / str(year)
-        m_template_data = {"months": []}
+        m_template_data = {"year": year, "months": []}
         for mdir in month_path.iterdir():
             if mdir.is_dir():
                 month = int(mdir.name)
@@ -69,10 +71,12 @@ def main(opts: argparse.Namespace) -> None:
         m_str = f"{month:02d}"
 
         location_nav_template = files("aio_stats.data").joinpath("location_nav.html")
-        j2_template = Template(location_nav_template.read_text())
+        j2_template = Template(
+            location_nav_template.read_text(), trim_blocks=True, lstrip_blocks=True
+        )
 
         location_path: pathlib.Path = opts.data_dir / str(year) / m_str
-        l_template_data = {"locations": []}
+        l_template_data = {"year": year, "month": m.name.title(), "locations": []}
         for lfile in location_path.iterdir():
             if lfile.is_file() and lfile.suffix == ".html" and lfile.stem != "index":
                 loc = lfile.stem.split("_")[0]
