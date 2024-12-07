@@ -8,14 +8,14 @@ from datetime import datetime, timedelta
 from importlib.resources import files
 import pathlib
 import shutil
-import tomllib
 
 from jinja2 import Template
 import plotly.graph_objects as go
 import plotly.io as pio
 
+from . import creators
 from ..data_reader import DataReader
-from .creators import make_min_max_dist, make_stats_trend
+from ..helpers import load_feed_settings
 
 __all__ = ["runner"]
 
@@ -26,7 +26,9 @@ def main(opts: argparse.Namespace) -> None:
     layout = dict(height=525, width=700)
 
     input_template = files("aio_stats.data").joinpath("stats_plotting.html")
-    j2_template = Template(input_template.read_text())
+    j2_template = Template(
+        input_template.read_text(), trim_blocks=True, lstrip_blocks=True
+    )
 
     if opts.year is None and opts.month is None:
         local_time = datetime.now()
@@ -41,8 +43,7 @@ def main(opts: argparse.Namespace) -> None:
     m = calendar.Month(month)
     m_str = f"{month:02d}"
 
-    stat_feeds_file = files("aio_stats.data").joinpath("stat_feeds.toml")
-    stat_feeds = tomllib.loads(stat_feeds_file.read_text())
+    stat_feeds = load_feed_settings()
 
     if opts.location is not None:
         locations = [opts.location]
@@ -76,10 +77,8 @@ def main(opts: argparse.Namespace) -> None:
             for plot_function in plot_functions:
                 short_name = stat_feeds["shorts"][feed]
                 fig = go.Figure(layout=layout)
-                if plot_function == "stats_trend":
-                    make_stats_trend(short_name, fig, df)
-                if plot_function == "min_max_dist":
-                    make_min_max_dist(short_name, fig, df)
+                plotter = getattr(creators, f"make_{plot_function}")
+                plotter(short_name, fig, df)
                 fig_file: pathlib.Path = fig_path / f"{feed}_{plot_function}.svg"
                 fig.write_image(fig_file)
                 template_data["figs"].append(fig_file)

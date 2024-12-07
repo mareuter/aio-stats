@@ -2,17 +2,17 @@
 #
 # SPDX-License-Identifier: MIT
 
-from datetime import datetime
 import pathlib
 import tomllib
-from zoneinfo import ZoneInfo
 
 from Adafruit_IO import Client, Data
+
+from .transform_data_mixin import TransformDataMixin
 
 __all__ = ["AioClient"]
 
 
-class AioClient:
+class AioClient(TransformDataMixin):
 
     def __init__(self, key_file: pathlib.Path = None) -> None:
         """Class constructor.
@@ -64,27 +64,3 @@ class AioClient:
         # Adafruit IO returns newest data first.
         data.reverse()
         return data
-
-    def transform_data(
-        self, data: list[Data], timezone: str
-    ) -> list[tuple[datetime, float]]:
-        """Simplify data from that retrieved from Adafruit IO.
-
-        Parameters
-        ----------
-        data : list[Data]
-            List of data points.
-        timezone : str
-            Time zone for the data point translation.
-
-        Returns
-        -------
-        list[tuple[datetime, float]]
-            Simplified data points.
-        """
-        zone = ZoneInfo(timezone)
-        tdata = [
-            (datetime.fromisoformat(x.created_at).astimezone(zone), float(x.value))
-            for x in data
-        ]
-        return tdata

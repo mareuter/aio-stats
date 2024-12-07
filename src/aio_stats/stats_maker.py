@@ -55,7 +55,7 @@ class StatsMaker:
             end = end.replace(hour=0, minute=0, second=0)
         else:
             self.timestamp = begin
-        self.df = self.df.loc[begin:end]
+        self.df = self.df.loc[self.timestamp:end]
 
     def make_stats(self) -> None:
         """Calculate statistics from data."""
