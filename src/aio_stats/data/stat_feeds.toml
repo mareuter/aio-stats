@@ -26,3 +26,4 @@ relative-humidity = ["stats_trend", "min_max_scatter"]
 [shorts]
 temperature = "Temp"
 relative-humidity = "RH"
+autolux = "Lux"

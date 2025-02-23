@@ -19,6 +19,8 @@ def make_line_plot(
         y_axis_title = "Temperature (°F)"
     if type == "RH":
         y_axis_title = "Relative Humidity (%)"
+    if type == "Lux":
+        y_axis_title = "Light Level (lx)"
 
     trace = go.Scatter(
         mode="lines", line=dict(color="blue"), x=df.index, y=df[df.columns[0]]
