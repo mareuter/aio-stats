@@ -55,7 +55,7 @@ class StatsMaker:
             end = end.replace(hour=0, minute=0, second=0)
         else:
             self.timestamp = begin
-        self.df = self.df.loc[self.timestamp:end]
+        self.df = self.df.loc[self.timestamp : end]
 
     def make_stats(self) -> None:
         """Calculate statistics from data."""
@@ -83,6 +83,28 @@ class StatsMaker:
 
         self.stats = pa.Table.from_pydict(stats)
 
+    def save_raw(self, top_level: pathlib.Path, sub_path: str) -> None:
+        """Save the raw data to file.
+
+        Parameters
+        ----------
+        top_level : pathlib.Path
+            Main directory where the data should be saved.
+        sub_path : str
+            Sensor location.
+        """
+        tpath = (
+            top_level
+            / "raw"
+            / sub_path
+            / self.df.columns[0]
+            / str(self.timestamp.year)
+            / f"{self.timestamp.strftime('%m')}"
+        )
+        tpath.mkdir(parents=True, exist_ok=True)
+        outfile = tpath / f"{self.timestamp.strftime('%d')}.parquet"
+        self.df.to_parquet(outfile)
+
     def save_stats(self, top_level: pathlib.Path, sub_path: str) -> None:
         """Save the calculated statistics to file.
 
@@ -95,6 +117,7 @@ class StatsMaker:
         """
         tpath = (
             top_level
+            / "stats"
             / sub_path
             / self.df.columns[0]
             / str(self.timestamp.year)

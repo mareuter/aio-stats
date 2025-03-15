@@ -33,6 +33,7 @@ def main(opts: argparse.Namespace) -> None:
             stats = StatsMaker()
             stats.create_dataframe(tdata, feed)
             stats.filter_time(yesterday, now, opts.day_bound)
+            stats.save_raw(opts.output_dir, location)
             stats.make_stats()
             stats.save_stats(opts.output_dir, location)
 
