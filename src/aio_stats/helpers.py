@@ -4,11 +4,45 @@
 
 """Module for common stuff."""
 
+from datetime import datetime
 from importlib.resources import files
 import tomllib
 from typing import Any
 
-__all__ = ["load_feed_settings"]
+__all__ = ["Bounds", "cdleq_to_dict", "load_feed_settings"]
+
+Bounds = tuple[datetime, datetime]
+
+
+def cdleq_to_dict(items: str) -> dict[str, str | float]:
+    """Parse comma-delimited list with equals items.
+
+    This function takes a string of this format:
+
+    item1=value1,item2=value2...
+
+    and returns a dictionary with the items as string keys and the values
+    as either strings or floats.
+
+    Parameters
+    ----------
+    items : str
+        Set of values to parse.
+
+    Returns
+    -------
+    dict[str, str | float]
+        The results from the string parsing.
+    """
+    result = {}
+    for item in items.split(","):
+        key, value = item.split("=")
+        try:
+            value = float(value)
+        except ValueError:
+            pass
+        result[key] = value
+    return result
 
 
 def load_feed_settings() -> dict[str, Any]:
