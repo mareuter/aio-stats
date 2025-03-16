@@ -19,7 +19,7 @@ feeds = [
 # Time between points in minutes
 delay = 5
 # Bounds required
-[location.living-room.bounds]
+[locations.living-room.bounds]
 autolux = "lamptimer"
 
 [plotting]
