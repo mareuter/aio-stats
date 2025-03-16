@@ -37,7 +37,7 @@ def main(opts: argparse.Namespace) -> None:
                 else:
                     timestamp = yesterday
                 max_points = round((now - timestamp) / timedelta(minutes=delay)) + 10
-                print(max_points)
+                print(f"Calculated number of points: {max_points}")
             else:
                 max_points = 350
             data = aioclient.fetch_data(f"{location}.{feed}", max_points=max_points)
