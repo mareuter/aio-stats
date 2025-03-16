@@ -14,7 +14,8 @@ from .stats_maker import StatsMaker
 
 
 def main(opts: argparse.Namespace) -> None:
-    now = datetime.now(ZoneInfo(opts.timezone))
+    zone = ZoneInfo(opts.timezone)
+    now = datetime.now(zone)
     yesterday = now - timedelta(days=1)
 
     stat_feeds = load_feed_settings()
@@ -29,7 +30,17 @@ def main(opts: argparse.Namespace) -> None:
     for location in locations:
         for feed in stat_feeds["locations"][location]["feeds"]:
             print(f"Processing {location}.{feed}")
-            data = aioclient.fetch_data(f"{location}.{feed}", max_points=350)
+            if opts.calc_points:
+                delay = stat_feeds["locations"][location]["delay"]
+                if opts.day_bound:
+                    timestamp = yesterday.replace(hour=0, minute=0, second=0)
+                else:
+                    timestamp = yesterday
+                max_points = round((now - timestamp) / timedelta(minutes=delay)) + 10
+                print(max_points)
+            else:
+                max_points = 350
+            data = aioclient.fetch_data(f"{location}.{feed}", max_points=max_points)
             tdata = aioclient.transform_data(data, opts.timezone)
             stats = StatsMaker()
             stats.create_dataframe(tdata, feed)
@@ -59,12 +70,10 @@ def main(opts: argparse.Namespace) -> None:
                 ipath.mkdir(parents=True, exist_ok=True)
                 outfile = ipath / f"{stats.timestamp.strftime('%d')}.json"
                 with outfile.open("w") as ofile:
-                    json.dumps(bound_set, ofile)
+                    json.dump(bound_set, ofile)
                 bounds = (
-                    datetime.fromtimestamp(bound_set["sunrise"]).astimezone(
-                        opts.timezone
-                    ),
-                    datetime.fromtimestamp(bound_set["off"]).astimezone(opts.timezone),
+                    datetime.fromtimestamp(bound_set["sunrise"]).astimezone(zone),
+                    datetime.fromtimestamp(bound_set["on"]).astimezone(zone),
                 )
             except KeyError:
                 pass
@@ -87,6 +96,12 @@ def runner() -> None:
 
     parser.add_argument(
         "--location", help="Provide the location for the feed data retrieval."
+    )
+
+    parser.add_argument(
+        "--calc-points",
+        action="store_true",
+        help="Calculate the number of points to ask from Adafruit IO.",
     )
 
     args = parser.parse_args()
