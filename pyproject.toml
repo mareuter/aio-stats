@@ -41,7 +41,7 @@ dev = [
 collect_stats = "aio_stats.collect_stats:runner"
 env_runner = "aio_stats.plotting.env_runner:runner"
 page_maker = "aio_stats.plotting.page_maker:runner"
-plot_raw = "aio_stats.plotting.plot_raw:runner"
+plot_raw_from_csv = "aio_stats.plotting.plot_raw_from_csv:runner"
 save_csv_raw = "aio_stats.save_csv_raw:runner"
 
 [tool.setuptools_scm]
