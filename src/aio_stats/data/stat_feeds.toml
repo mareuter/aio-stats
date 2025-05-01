@@ -12,6 +12,14 @@ feeds = [
 # Time between points in minutes
 delay = 5
 
+[locations.northwest-bedroom]
+feeds = [
+    "temperature",
+    "relative-humidity"
+]
+# Time between points in minutes
+delay = 5
+
 [locations.living-room]
 feeds = [
     "autolux"
