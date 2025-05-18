@@ -60,7 +60,7 @@ def main(opts: argparse.Namespace) -> None:
             "figs": [],
         }
 
-        top_data_path = f"~/Documents/SensorData/{location}"
+        top_data_path = f"~/Documents/SensorData/stats/{location}"
         location_stem = f"{location.title()}_{year}{m_str}"
         fig_path = pathlib.Path(location_stem)
         fig_path.mkdir(exist_ok=True)

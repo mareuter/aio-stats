@@ -87,6 +87,9 @@ def make_stats_trend(type: str, fig: go.Figure, df: pd.DataFrame) -> None:
     if type == "RH":
         y_axis_title = "Relative Humidity (%)"
         plot_title = "Relative Humidity Trend"
+    if type == "Lux":
+        y_axis_title = "Light Level (lx)"
+        plot_title = "Light Level Trend"
 
     if df.day.size == 1:
         mode = "markers"

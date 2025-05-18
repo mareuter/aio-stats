@@ -9,6 +9,8 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from .helpers import Bounds
+
 __all__ = ["StatsMaker"]
 
 
@@ -55,19 +57,23 @@ class StatsMaker:
             end = end.replace(hour=0, minute=0, second=0)
         else:
             self.timestamp = begin
-        self.df = self.df.loc[self.timestamp:end]
+        self.df = self.df.loc[self.timestamp : end]
 
-    def make_stats(self) -> None:
+    def make_stats(self, bounds: Bounds | None) -> None:
         """Calculate statistics from data."""
-        column = self.df.columns[0]
-        v_min = self.df.min().values[0]
-        v_max = self.df.max().values[0]
-        v_mean = self.df.mean().values[0]
-        v_median = self.df.median().values[0]
-        v_std = self.df.std().values[0]
-        v_var = self.df.var().values[0]
-        time_of_min = self.df[self.df[column] == v_min].index.tolist()[0]
-        time_of_max = self.df[self.df[column] == v_max].index.tolist()[0]
+        if bounds is not None:
+            df = self.df.loc[bounds[0] : bounds[1]]
+        else:
+            df = self.df
+        column = df.columns[0]
+        v_min = df.min().values[0]
+        v_max = df.max().values[0]
+        v_mean = df.mean().values[0]
+        v_median = df.median().values[0]
+        v_std = df.std().values[0]
+        v_var = df.var().values[0]
+        time_of_min = df[df[column] == v_min].index.tolist()[0]
+        time_of_max = df[df[column] == v_max].index.tolist()[0]
 
         stats = {
             "min": [v_min],
@@ -83,6 +89,28 @@ class StatsMaker:
 
         self.stats = pa.Table.from_pydict(stats)
 
+    def save_raw(self, top_level: pathlib.Path, sub_path: str) -> None:
+        """Save the raw data to file.
+
+        Parameters
+        ----------
+        top_level : pathlib.Path
+            Main directory where the data should be saved.
+        sub_path : str
+            Sensor location.
+        """
+        tpath = (
+            top_level
+            / "raw"
+            / sub_path
+            / self.df.columns[0]
+            / str(self.timestamp.year)
+            / f"{self.timestamp.strftime('%m')}"
+        )
+        tpath.mkdir(parents=True, exist_ok=True)
+        outfile = tpath / f"{self.timestamp.strftime('%d')}.parquet"
+        self.df.to_parquet(outfile)
+
     def save_stats(self, top_level: pathlib.Path, sub_path: str) -> None:
         """Save the calculated statistics to file.
 
@@ -95,6 +123,7 @@ class StatsMaker:
         """
         tpath = (
             top_level
+            / "stats"
             / sub_path
             / self.df.columns[0]
             / str(self.timestamp.year)

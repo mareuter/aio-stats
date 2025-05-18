@@ -27,6 +27,21 @@ class DataReader:
         p = ds.partitioning(field_names=["year", "month"])
         self.table = pq.read_table(self.data_dir, partitioning=p)
 
+    def read_day(self, year: int, month: int, day: int) -> None:
+        """Read a specific day file.
+
+        Parameters
+        ----------
+        year : int
+            Year to fetch.
+        month : int
+            Month to fetch.
+        day : int
+            Day to fetch.
+        """
+        infile = self.data_dir / f"{year}" / f"{month:02d}" / f"{day:02d}.parquet"
+        self.table = pq.read_table(infile)
+
     def read_month(self) -> None:
         """Read data from specific month."""
         self.table = pq.read_table(self.data_dir)

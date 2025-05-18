@@ -14,7 +14,7 @@ class TransformDataMixin:
 
     def transform_data(
         self, data: list[Data], timezone: str
-    ) -> list[tuple[datetime, float]]:
+    ) -> list[tuple[datetime, float | str]]:
         """Simplify data from that retrieved from Adafruit IO.
 
         Parameters
@@ -26,12 +26,16 @@ class TransformDataMixin:
 
         Returns
         -------
-        list[tuple[datetime, float]]
+        list[tuple[datetime, float | str]]
             Simplified data points.
         """
         zone = ZoneInfo(timezone)
-        tdata = [
-            (datetime.fromisoformat(x.created_at).astimezone(zone), float(x.value))
-            for x in data
-        ]
+        tdata = []
+        for x in data:
+            t = datetime.fromisoformat(x.created_at).astimezone(zone)
+            try:
+                v = float(x.value)
+            except ValueError:
+                v = x.value
+            tdata.append((t, v))
         return tdata
