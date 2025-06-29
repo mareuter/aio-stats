@@ -30,6 +30,14 @@ delay = 5
 [locations.living-room.bounds]
 autolux = "lamptimer"
 
+[locations.main-bedroom]
+feeds = [
+    "temperature",
+    "relative-humidity"
+]
+# Time between points in minutes
+delay = 5
+
 [plotting]
 temperature = ["stats_trend", "min_max_scatter"]
 relative-humidity = ["stats_trend", "min_max_scatter"]
