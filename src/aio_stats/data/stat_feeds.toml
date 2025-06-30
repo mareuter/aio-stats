@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Michael Reuter
+# SPDX-FileCopyrightText: 2024-2025 Michael Reuter
 #
 # SPDX-License-Identifier: MIT
 
@@ -31,6 +31,14 @@ delay = 5
 autolux = "lamptimer"
 
 [locations.main-bedroom]
+feeds = [
+    "temperature",
+    "relative-humidity"
+]
+# Time between points in minutes
+delay = 5
+
+[locations.family-room]
 feeds = [
     "temperature",
     "relative-humidity"
