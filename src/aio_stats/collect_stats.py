@@ -16,7 +16,11 @@ from .stats_maker import StatsMaker
 def main(opts: argparse.Namespace) -> None:
     zone = ZoneInfo(opts.timezone)
     now = datetime.now(zone)
-    yesterday = now - timedelta(days=1)
+    if opts.old_date is not None:
+        yesterday = datetime.strptime(opts.old_date, "%Y-%m-%d").astimezone(zone)
+        new_now = yesterday + timedelta(days=1)
+    else:
+        yesterday = now - timedelta(days=1)
 
     stat_feeds = load_feed_settings()
 
@@ -44,7 +48,10 @@ def main(opts: argparse.Namespace) -> None:
             tdata = aioclient.transform_data(data, opts.timezone)
             stats = StatsMaker()
             stats.create_dataframe(tdata, feed)
-            stats.filter_time(yesterday, now, opts.day_bound)
+            if opts.old_date is not None:
+                stats.filter_time(yesterday, new_now, opts.day_bound)
+            else:
+                stats.filter_time(yesterday, now, opts.day_bound)
             stats.save_raw(opts.output_dir, location)
             # Mainly for autolux
             bounds: Bounds | None = None
@@ -102,6 +109,10 @@ def runner() -> None:
         "--calc-points",
         action="store_true",
         help="Calculate the number of points to ask from Adafruit IO.",
+    )
+
+    parser.add_argument(
+        "--old-date", type=str, help="Get data from prior date. Format of YYYY-MM-DD."
     )
 
     args = parser.parse_args()
