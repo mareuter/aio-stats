@@ -82,6 +82,8 @@ def main(opts: argparse.Namespace) -> None:
                     datetime.fromtimestamp(bound_set["sunrise"]).astimezone(zone),
                     datetime.fromtimestamp(bound_set["on"]).astimezone(zone),
                 )
+            except UnboundLocalError:
+                print(f"Failed to find bounds for {location}.{feed}")
             except KeyError:
                 pass
             stats.make_stats(bounds)
