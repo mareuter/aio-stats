@@ -53,6 +53,9 @@ def main(opts: argparse.Namespace) -> None:
             else:
                 stats.filter_time(yesterday, now, opts.day_bound)
             stats.save_raw(opts.output_dir, location)
+            # Skip stats for battery information except for battery temperature
+            if "battery" in feed and "temperature" not in feed:
+                continue
             # Mainly for autolux
             bounds: Bounds | None = None
             try:
