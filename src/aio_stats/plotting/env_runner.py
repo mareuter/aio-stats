@@ -67,13 +67,16 @@ def main(opts: argparse.Namespace) -> None:
         fig_paths.append(fig_path)
 
         for feed in stat_feeds["locations"][location]["feeds"]:
+            plot_functions = stat_feeds["plotting"][feed]
+            # Skip feeds that don't have plotting defined.
+            if not plot_functions:
+                continue
             data_path = f"{top_data_path}/{feed}/{year}/{m_str}"
 
             data = DataReader(pathlib.Path(data_path))
             data.read_month()
             df = data.table.to_pandas()
 
-            plot_functions = stat_feeds["plotting"][feed]
             for plot_function in plot_functions:
                 short_name = stat_feeds["shorts"][feed]
                 fig = go.Figure(layout=layout)
