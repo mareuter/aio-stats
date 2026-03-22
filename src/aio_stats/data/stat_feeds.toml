@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024-2025 Michael Reuter
+# SPDX-FileCopyrightText: 2024-2026 Michael Reuter
 #
 # SPDX-License-Identifier: MIT
 
@@ -7,7 +7,9 @@
 [locations.office]
 feeds = [
     "temperature",
-    "relative-humidity"
+    "relative-humidity",
+    "battery-percent",
+    "battery-voltage"
 ]
 # Time between points in minutes
 delay = 5
@@ -15,14 +17,18 @@ delay = 5
 [locations.northwest-bedroom]
 feeds = [
     "temperature",
-    "relative-humidity"
+    "relative-humidity",
+    "battery-percent",
+    "battery-voltage"
 ]
 # Time between points in minutes
 delay = 5
 
 [locations.living-room]
 feeds = [
-    "autolux"
+    "autolux",
+    "ls-battery-percent",
+    "ls-battery-voltage"
 ]
 # Time between points in minutes
 delay = 5
@@ -33,7 +39,9 @@ autolux = "lamptimer"
 [locations.main-bedroom]
 feeds = [
     "temperature",
-    "relative-humidity"
+    "relative-humidity",
+    "battery-percent",
+    "battery-voltage"
 ]
 # Time between points in minutes
 delay = 5
@@ -41,7 +49,9 @@ delay = 5
 [locations.family-room]
 feeds = [
     "temperature",
-    "relative-humidity"
+    "relative-humidity",
+    "battery-percent",
+    "battery-voltage"
 ]
 # Time between points in minutes
 delay = 5
@@ -50,6 +60,10 @@ delay = 5
 temperature = ["stats_trend", "min_max_scatter"]
 relative-humidity = ["stats_trend", "min_max_scatter"]
 autolux = ["stats_trend"]
+battery-voltage = []
+battery-percent = []
+ls-battery-voltage = []
+ls-battery-percent = []
 
 [shorts]
 temperature = "Temp"
