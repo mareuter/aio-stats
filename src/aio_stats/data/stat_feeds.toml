@@ -28,7 +28,11 @@ delay = 5
 feeds = [
     "autolux",
     "ls-battery-percent",
-    "ls-battery-voltage"
+    "ls-battery-voltage",
+    "temperature",
+    "relative-humidity",
+    "battery-percent",
+    "battery-voltage"
 ]
 # Time between points in minutes
 delay = 5
