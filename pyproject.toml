@@ -31,6 +31,7 @@ dependencies = [
 collect_stats = "aio_stats.collect_stats:runner"
 create_feeds = "aio_stats.create_feeds:runner"
 env_runner = "aio_stats.plotting.env_runner:runner"
+ingest_influx = "aio_stats.ingest.ingest_data:runner"
 page_maker = "aio_stats.plotting.page_maker:runner"
 plot_raw_from_csv = "aio_stats.plotting.plot_raw_from_csv:runner"
 plot_raw = "aio_stats.plotting.plot_raw:runner"
@@ -39,6 +40,8 @@ save_csv_raw = "aio_stats.save_csv_raw:runner"
 [dependency-groups]
 dev = [
     "pre-commit"
+]
+influx = [
 ]
 plot = [
     "kaleido",
